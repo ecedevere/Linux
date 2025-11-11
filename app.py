@@ -9,9 +9,9 @@ def index():
     # Connect to MySQL/MariaDB
     conn = mysql.connector.connect(
         host="localhost",
-        user="lempuser",               # Replace with your DB username
-        password="f#r579Ddq", # Replace with your DB password
-        database="lempdb"              # Replace with your DB name
+        user="username",               # Replace with your DB username
+        password="your password, # Replace with your DB password
+        database="database"              # Replace with your DB name
     )
 
     cursor = conn.cursor()
