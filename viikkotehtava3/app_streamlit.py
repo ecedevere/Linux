@@ -34,7 +34,7 @@ try:
     conn = pymysql.connect(
         host="localhost",
         user="weather_user",
-        password="4Rg5!33tt",
+        password=os.getenv("DB_PASS"),
         database="weather_db",
         charset="utf8mb4"
     )
@@ -92,7 +92,7 @@ st.title("💰Valuuttakurssit (1 €)💰")
 st.markdown("*(päivittyy 15 min välein)*")
 
 try:
-    conn = pymysql.connect(host="localhost", user="weather_user", password="4Rg5!33tt", database="weather_db", charset="utf8mb4")
+    conn = pymysql.connect(host="localhost", user="weather_user", password=os.getenv("DB_PASS"), database="weather_db", charset="utf8mb4")
     
     dfc = pd.read_sql("""
         SELECT timestamp, 
