@@ -1,39 +1,6 @@
-#salasanat
 .env
 *.env
-.env.example
-secrets*
-passwords*
-*.toml
-
-#venv
+*.log
 venv/
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# logs
-*.log
-cron.log
-weather.log
-currency.log
-
-# STREAMLIT
 .streamlit/
-.streamlit/secrets.toml
-
-#Väliaikaiset ja isot tiedostot
-*.csv
-*.db
-*.sqlite3
-.DS_Store
-Thumbs.db
-*.bak
-*.tmp
-
-# IDE / ОС
-.idea/
-.vscode/
-*.swp
-*~
