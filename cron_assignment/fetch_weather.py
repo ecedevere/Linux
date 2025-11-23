@@ -16,9 +16,9 @@ URL = f"https://api.openweathermap.org/data/2.5/weather?q=Oulu&appid={API_KEY}&u
 
 conn = pymysql.connect(
     host="localhost",
-    user="weather_user",
-    password="4Rg5!33tt",
-    database="weather_db",
+    user="user",
+    password="your password",
+    database="your db",
     charset="utf8mb4"
 )
 
