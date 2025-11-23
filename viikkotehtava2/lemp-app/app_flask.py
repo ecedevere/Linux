@@ -10,7 +10,7 @@ def index():
     conn = mysql.connector.connect(
         host="localhost",
         user="lempuser",
-        password="f#r579Ddq",
+        password=os.getenv("LEMP_DB_PASS"),
         database="lempdb"
     )
     cursor = conn.cursor()
