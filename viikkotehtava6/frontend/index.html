@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEMP Stack K8s Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        #whisper-input {
+            width: 70%;
+            padding: 8px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LEMP Stack on Kubernetes</h1>
+        <p>Frontend: Nginx | Backend: Python/Flask | Database: MySQL</p>
+
+        <div>
+            <button onclick="checkHealth()">Check Backend Health</button>
+            <button onclick="initDB()">Initialize Database</button>
+            <button onclick="getUsers()">Get Users</button>
+            <button onclick="showFact()">Fact</button>
+        </div>
+
+        <div style="margin-top:15px;">
+            <input type="text" id="whisper-input" placeholder="Write a whisper...">
+            <button onclick="sendWhisper()">Send Whisper</button>
+            <button onclick="loadWhispers()">Show Whispers</button>
+        </div>
+
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const resultDiv = document.getElementById('result');
+
+        async function checkHealth() {
+            try {
+                const response = await fetch('/kube/api/health');
+                const data = await response.json();
+                resultDiv.textContent = 'Health Check: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function initDB() {
+            try {
+                const response = await fetch('/kube/api/init-db');
+                const data = await response.json();
+                resultDiv.textContent = 'DB Init: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function getUsers() {
+            try {
+                const response = await fetch('/kube/api/users');
+                const data = await response.json();
+                resultDiv.textContent = 'Users: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function loadWhispers() {
+            try {
+                const response = await fetch('/kube/api/whispers');
+                const data = await response.json();
+                resultDiv.textContent = '';
+                data.forEach(w => {
+                    resultDiv.textContent += `[${w.created_at}] ${w.message}\n`;
+                });
+            } catch (error) {
+                resultDiv.textContent = 'Error loading whispers: ' + error.message;
+            }
+        }
+
+        async function sendWhisper() {
+            const input = document.getElementById('whisper-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            try {
+                await fetch('/kube/api/whispers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                input.value = '';
+                loadWhispers();
+            } catch (error) {
+                resultDiv.textContent = 'Error sending whisper: ' + error.message;
+            }
+        }
+
+        // Fact
+        const facts = [
+            "Over an average lifespan, the human heart pumps enough blood to fill more than three supertankers.",
+            "The only part of the body without a blood supply is the cornea of the eye. It receives oxygen directly from the air.",
+            "We can recognize thousands of scents. The human nose is capable of recognizing about 50,000 different scents.",
+            "The human brain can store about 2.5 petabytes of information — that's like 300 years of TV shows.",
+            "Your stomach acid is strong enough to dissolve stainless steel.",
+            "A human sheds about 18 kg (40 pounds) of skin in a lifetime.",
+            "The average person walks the equivalent of three times around the world in a lifetime.",
+            "Your small intestine is about four times longer than you are tall.",
+            "The human body contains enough iron to make a small nail.",
+            "You produce about 1.7 liters of saliva each day — enough to fill a small bottle."
+        ];
+
+        function showFact() {
+            const randomIndex = Math.floor(Math.random() * facts.length);
+            resultDiv.textContent = facts[randomIndex];
+        }
+    </script>
+</body>
+</html>
