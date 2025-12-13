@@ -10,6 +10,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Debug - Show directory structure
+        run: |
+          echo "=== Root directory ==="
+          ls -la
+          echo "=== cicd-app directory ==="
+          ls -la cicd-app/ || echo "cicd-app not found!"
+          echo "=== cicd-app/backend directory ==="
+          ls -la cicd-app/backend/ || echo "backend not found!"
+          echo "=== cicd-app/frontend directory ==="
+          ls -la cicd-app/frontend/ || echo "frontend not found!"
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
