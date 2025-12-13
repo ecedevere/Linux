@@ -1,67 +1,63 @@
 name: CI/CD for LEMP Containers
-
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 jobs:
   # ================================
   # BUILD & PUSH DOCKER IMAGES
   # ================================
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
+      
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      
       # -----------------------------
       # BACKEND IMAGE
       # -----------------------------
       - name: Build & push backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./cicd-app/backend
-          file: ./cicd-app/backend/Dockerfile
+          context: ./backend
+          file: ./backend/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-backend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-backend:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/cicd-backend:latest
           cache-to: type=inline
-
+      
       # -----------------------------
       # FRONTEND IMAGE
       # -----------------------------
       - name: Build & push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./cicd-app/frontend
-          file: ./cicd-app/frontend/Dockerfile
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest
           cache-to: type=inline
-
+  
   # ================================
   # DEPLOY TO VPS
   # ================================
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-
     steps:
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v1
@@ -76,4 +72,4 @@ jobs:
             docker compose pull
             docker compose down
             docker compose up -d
-            docker compose ps
+            docker compose p
