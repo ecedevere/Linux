@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    container_name: cicd_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cicd
+      MYSQL_USER: cicduser
+      MYSQL_PASSWORD: cicd123
+    ports:
+      - "3310:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: cicd_backend
+    environment:
+      DB_HOST: db
+      DB_USER: cicduser
+      DB_PASSWORD: cicd123
+      DB_NAME: cicd
+    ports:
+      - "5005:5000"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: cicd_frontend
+    ports:
+      - "8090:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

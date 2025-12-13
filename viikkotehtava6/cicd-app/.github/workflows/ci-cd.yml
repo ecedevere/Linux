@@ -51,3 +51,4 @@ jobs:
             cd /opt/lemp/viikkotehtava6/cicd-app
             docker compose pull
             docker compose up -d
+            docker compose ps
