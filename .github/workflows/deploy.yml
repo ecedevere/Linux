@@ -24,17 +24,18 @@ jobs:
       - name: Build & push backend image
         uses: docker/build-push-action@v5
         with:
-          context: viikkotehtava6
-          file: viikkotehtava6/backend/Dockerfile
+          context: ./viikkotehtava6/backend
+          file: ./viikkotehtava6/backend/Dockerfile
           push: true
           tags: |
-            ecedevere/backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/lemp-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/lemp-backend:${{ github.sha }}
 
       - name: Build & push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: viikkotehtava6
-          file: viikkotehtava6/frontend/Dockerfile
+          context: ./viikkotehtava6/frontend
+          file: ./viikkotehtava6/frontend/Dockerfile
           push: true
           tags: |
             ecedevere/frontend:latest
