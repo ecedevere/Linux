@@ -3,35 +3,35 @@ version: '3.8'
 services:
   db:
     image: mysql:8
-    container_name: cicd_db
+    container_name: lemp_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: cicd
-      MYSQL_USER: cicduser
-      MYSQL_PASSWORD: cicd123
+      MYSQL_DATABASE: lemp
+      MYSQL_USER: lempuser
+      MYSQL_PASSWORD: lemp123
     ports:
-      - "3310:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
 
   backend:
-    build: ./backend
-    container_name: cicd_backend
+    image: ecedevere/lemp-backend:latest
+    container_name: lemp_backend
     environment:
       DB_HOST: db
-      DB_USER: cicduser
-      DB_PASSWORD: cicd123
-      DB_NAME: cicd
+      DB_USER: lempuser
+      DB_PASSWORD: lemp123
+      DB_NAME: lemp
     ports:
-      - "5005:5000"
+      - "5003:5000"
     depends_on:
       - db
 
   frontend:
-    build: ./frontend
-    container_name: cicd_frontend
+    image: ecedevere/lemp-frontend:latest
+    container_name: lemp_frontend
     ports:
-      - "8090:80"
+      - "8080:80"
     depends_on:
       - backend
 
