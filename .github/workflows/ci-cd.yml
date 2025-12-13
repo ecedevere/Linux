@@ -1,0 +1,23 @@
+name: CI/CD for LEMP Containers
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd /opt/lemp/viikkotehtava6/cicd-app
+            docker compose pull
+            docker compose down
+            docker compose up -d
+            docker compose ps
