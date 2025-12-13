@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
@@ -32,8 +31,8 @@ jobs:
       - name: Build & push backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: .                                    # Корень репозитория (обязательно для поддиректорий)
+          file: ./backend/Dockerfile                    # Путь к Dockerfile относительно корня
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-backend:latest
@@ -47,7 +46,7 @@ jobs:
       - name: Build & push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: .                                    # Корень репозитория
           file: ./frontend/Dockerfile
           push: true
           tags: |
@@ -59,13 +58,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
+    # Деплой только на main-ветке (можно убрать, если нужно деплоить всегда)
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Обычно root или другой пользователь
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
@@ -75,3 +76,4 @@ jobs:
             docker compose down
             docker compose up -d
             docker compose ps
+            echo "Deployment completed successfully!"
