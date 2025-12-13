@@ -28,8 +28,8 @@ jobs:
       - name: Build & push backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./cicd-app/backend
+          file: ./cicd-app/backend/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-backend:latest
@@ -43,8 +43,8 @@ jobs:
       - name: Build & push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: ./cicd-app/frontend
+          file: ./cicd-app/frontend/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest
@@ -72,4 +72,4 @@ jobs:
             docker compose pull
             docker compose down
             docker compose up -d
-            docker compose p
+            docker compose ps
